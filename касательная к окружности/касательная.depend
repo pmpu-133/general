@@ -1,0 +1,8 @@
+# depslib dependency file v1.0
+1471965178 source:c:\users\Господин\desktop\касательная\main.cpp
+	<bits/stdc++.h>
+
+1551438775 source:c:\users\Алекс\desktop\лкл\касательная\main.cpp
+	<bits/stdc++.h>
+	"windows.h"
+
