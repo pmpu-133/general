@@ -1,5 +1,8 @@
 #pragma once
+
+#include <windows.h>
 #include <fstream>
+
 class BMPRenderer{
 public:
 	BMPRenderer(const char*filename);
@@ -12,6 +15,9 @@ public:
 
 	~BMPRenderer();
 private:
-
+	std::ofstream m_fs;
+	BITMAPFILEHEADER m_bmfh;
+	BITMAPINFOHEADER m_bmih;
+	unsigned char *m_pPixels;
 };
 
