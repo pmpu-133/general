@@ -1,14 +1,10 @@
 #pragma once
 #include <iostream>
-#include "Architect.h"
+#include "pch.h"
 
-#define Id int
 
-struct identifiable {         //instead of para
-  Id id;
-};
 
-struct point2 :public identifiable {
+struct point2 {
   double x, y;
   point2() {
     x = 0;
@@ -20,7 +16,7 @@ struct point2 :public identifiable {
   }
 };
 
-class section :public identifiable {
+class section  {
 public:
   section() {
     point2 p(0, 0);
@@ -55,11 +51,11 @@ public:
   void setEnd(const point2 &e) { m_end = e; }
 
 private:
-  point2 &m_beg;
-  point2 &m_end;
+  point2 m_beg;
+  point2 m_end;
 };
 
-class arc :public identifiable {
+class arc {
 public:
   arc() {
     center.x = 0;
