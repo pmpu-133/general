@@ -9,13 +9,11 @@
 template<typename K> size_t hasher(const K& k) {
 	size_t res = k & 0xFF;
 	for (int c = 1; c < sizeof(k); ++c)
-		res += (k >> c) & 0xFF;
+		res += (k >> 8) & 0xFF;
 	return res;
 }
 
-template<typename K, 	typename V> 
-	class
-	hasht {
+template<typename K, 	typename V> class hasht {
 
 public:
 	hasht() {
@@ -26,13 +24,14 @@ public:
 
 	~hasht() {
 		for (int i = 0; i < m_Storage.Size(); ++i)
-			delete m_Storage[i];
+			if (m_Storage[i] != nullptr) 
+        delete m_Storage[i];
 		m_Storage.clear();
 	}
 
 
 	void AddData(const K& k, const V& value) {
-		/*size_t cellind = hasher()(k); // Aaaaaaa!!
+    size_t cellind = hasher<K>(k);
 		cellind %= 256;
 		if (m_Storage[cellind] != nullptr){
 			size_t probe = (cellind + 1) % 256;
@@ -42,24 +41,22 @@ public:
 			throw 42;
 		cellind = probe;
 	}
-	m_Storage.changeValue(cellind, new V(value));*/
+	m_Storage.changeValue(cellind, new V(value));
 }
 
-	/*bool hasK(const K& k)const {
-		size_t cellind = hashfun(k);
+/*	bool hasK(const K& k)const {
+		size_t cellind = hasher<K>(k);
 		cellind %= 256;
 		return m_Storage[cellind] == nullptr;
 	}*/
 
 	V operator[](const K& k)const {
-		size_t cellind = hashfun(k);
+		size_t cellind = hasher<K>(k);
 		cellind %= 256;
 		return *m_Storage[cellind];
 	}
 
 	
-	
-
 private:
 	Array<V*> m_Storage;
 

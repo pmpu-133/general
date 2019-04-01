@@ -1,6 +1,5 @@
 #pragma once
-#include  "objects.h"
-#include "stdafx.h" 
+#include "pch.h" 
 
 template<typename Data> class list {
 public:
