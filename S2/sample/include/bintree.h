@@ -26,21 +26,17 @@ public:
 		root->print();
 	}
 
-	bool hasK(const K& k)const {
+	bool hasK(const K& k)const {}
 
-	}
-
-	V operator[](const K& k)const {
-
-	}
+	V operator[](const K& k)const {}
 
 
 private:
 	class Node {
 	public:
-		Node() : k(0), v(0), left(nullptr), right(nullptr) {}
+		Node() : height(0), k(0), v(0), left(nullptr), right(nullptr) {}
 	
-		Node(K a, V b) : k(a), v(b), left(nullptr), right(nullptr) {}
+    Node(K a, V b) : height(1), k(a), v(b), left(nullptr), right(nullptr) {}
 
 		void AddData(const K& k1, const V& value) {
 			if (k1 > k && right)
@@ -52,9 +48,56 @@ private:
 			else left = new Node(k1, value);
 		}
 
-		void clear() {
-	
-		}
+		void clear() {}
+
+ 
+    unsigned char height(Node* p) {
+      return p ? p->height : 0;
+    } 
+
+
+    int bfactor(Node* p) {   // balanceFactor - difference of heights of the right and left subtree (balanced: -1,0,1)
+      return height(p->right) - height(p->left);
+    }
+    
+    void fixHeight(Node* p) {
+      unsigned char hl = height(p->left);
+      unsigned char hr = height(p->right);
+      p->height = (hl > hr ? hl : hr) + 1;
+    }
+
+    Node* rotateRight(Node* p) {  // right turn around p
+      Node* q = p->left;
+      p->left = q->right;
+      q->right = p;
+      fixHeight(p);
+      fixHeight(q);
+      return q;
+    }
+
+   Node* rotateLeft(Node* q) {  // left turn around q
+      Node* p = q->right;
+      q->right = p->left;
+      p->left = q;
+      fixHeight(q);
+      fixHeight(p);
+      return p;
+    }
+
+   Node* balance(Node* p) {  // balancing node p
+     fixHeight(p);
+     if (bfactor(p) == 2) {
+       if (bfactor(p->right) < 0)
+         p->right = rotateright(p->right);
+       return rotateleft(p);
+     }
+     if (bfactor(p) == -2) {
+       if (bfactor(p->left) > 0)
+         p->left = rotateleft(p->left);
+       return rotateright(p);
+     }
+     return p;
+   }
 
 		void print() {
 			if (left) left->print();
@@ -63,11 +106,11 @@ private:
 		}
 
 	private:
+    unsigned char height;    //the height of the subtree
 		Node * left;
 		Node * right;
 		K k;
 		V v;
 	};
-
-	Node *root;
+  Node *root;
 };
