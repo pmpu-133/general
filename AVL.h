@@ -1,38 +1,53 @@
 #pragma once
-
-class avl {
+template<typename Key, typename Data>
+class avl {		//Key должен иметь операторы (>; <; ==) и не должен повторяться
 public:
 	avl()
 	{
 		kor = nullptr;
 	}
-	avl(int k)
+	avl(Key k, Data d)
 	{
-		kor = new node(k);
+		kor = new node(k, d);
 	}
-	void push(int k)
+	void push(Key k, Data d)
 	{
 		if (kor == nullptr)
-			kor = new node(k);
+			kor = new node(k, d);
 		else
-			kor = insert(kor, k);
+			kor = insert(kor, k, d);
 	}
-	void pit()
+	void show()
 	{
-		show(kor);
+		pit(kor);
+	}
+	Data operator[](Key k)
+	{
+		node* p = kor;
+		while (p->key != k && p != nullptr)
+		{
+			if (p->key > k)
+				p = p->left;
+			else
+				p = p->right;
+		}
+		if (p != nullptr)
+			return p->data;
 	}
 
 
 private:
 	struct node // структура для представления узлов дерева
 	{
-		int key;
+		Key key;
+		Data data;
 		unsigned char height;
 		node *left;
 		node *right;
-		node(int k) 
+		node(Key k, Data d) 
 		{ 
 			key = k;
+			data = d;
 			left = right = nullptr;
 			height = 1;
 		}
@@ -40,12 +55,12 @@ private:
 
 	node* kor;
 
-	void show(node *n)
+	void pit(node *n)
 	{
 		if (n != nullptr) {
 			std::cout << n->key << ' ';
-			show(n->left);
-			show(n->right);
+			pit(n->left);
+			pit(n->right);
 		}
 	}
 	unsigned char height(node *p)
@@ -88,7 +103,7 @@ private:
 		fixheight(p);
 		return p;
 	}
-	node* balance(node* p) // балансировка узла p (Большой левый или большой правый поворот)(из двух или одного малого)
+	node *balance(node *p) // балансировка узла p (Большой левый или большой правый поворот)(из двух или одного малого)
 	{
 		fixheight(p);
 		if (bfactor(p) == 2)
@@ -105,13 +120,13 @@ private:
 		}
 		return p;
 	}
-	node* insert(node* p, int k) // вставка ключа k в дерево с корнем p
+	node *insert(node *p, Key k, Data d) // вставка ключа k в дерево с корнем p
 	{
-		if (!p) return new node(k);
+		if (!p) return new node(k, d);
 		if (k < p->key)
-			p->left = insert(p->left, k);
+			p->left = insert(p->left, k, d);
 		else
-			p->right = insert(p->right, k);
+			p->right = insert(p->right, k, d);
 		return balance(p);
 	}
 };
