@@ -2,54 +2,66 @@
 #include<iostream>
 
 
-template <typename K, typename V> class bintree {
+template <typename Key, typename Data> class bintree {
 public:
 	bintree() : root(nullptr) {}
 
+	bintree(Key& k, Data& value)  {
+		root = new Node(k, value);
+	}
+
 	~bintree() {
-		if (root)
-			root->clear();
+		
+	}
+	
+	void clear() {
+	   //Node* p = findmin(root);
+
 	}
 			
-	void AddData(const K& k, const V& value) {
+	void push(const Key& k, const Data& value) {
 		if (!root)
 			root = new Node(k, value);
 		else
-			root->AddData(k, value);
+			root = insert(root, k, value);
 	}
 
-	void DeleteElem(const K& k) {}
+	void DeleteElem(const Key& k) {
+		if (root) 
+		root = remove(root,k);
+	}
 
   void print() {  
     root->print();
   }
 
-  bool hasK(const K& k)const {
+  bool hasK(const Key& k)const {
     if (!root)
       return false;
     root->miniHasK(k);
   }
 
-	V operator[](const K& k)const {}
+	Data operator[](const Key& k)const {
+		Node* p = root;
+		while (p->key != k && p != nullptr) {
+			if (p->key > k)
+				p = p->left;
+			else
+				p = p->right;
+		}
+		if (p != nullptr)
+			return p->v;
+		return 0;
+	}
   
 private:
-	class Node {
-	public:
+	struct Node {
 		Node() : height(0), key(0), v(0), left(nullptr), right(nullptr) {}
 
-    Node(K a, V b) : height(1), key(a), v(b), left(nullptr), right(nullptr) {}
+    Node(Key a, Data b) : height(1), key(a), v(b), left(nullptr), right(nullptr) {}
 
-		void AddData(const K& k, const V& value) {
-			if (k > key && right)
-				right->AddData(k, value);
-			else if (k > key && !right)
-				right = new Node(k, v);
-			else if (k <= key && left)
-				left->AddData(k, value);
-			else left = new Node(k, value);
-		}
 
-    bool miniHasK(const K& k)const {
+    bool miniHasK(const Key& k)const {
       if (k == key)
         return true;
       if (k > key && right)
@@ -62,10 +74,22 @@ private:
         return false;
     }
 
-		void clear() {}
-
  
-    unsigned char getHeight(Node* p)const {
+		void print()const {
+			if (left) left->print();
+			std::cout << key << " - " << v << "\n";
+			if (right) right->print();
+		}
+
+    unsigned char height;    //the height of the subtree (actually, the difference of heights)
+		Node * left;
+		Node * right;
+		Key key;
+		Data v;
+	};
+  Node *root;
+	
+	unsigned char getHeight(Node* p)const {
       if (p != nullptr)
         return p->height;
        else
@@ -116,20 +140,43 @@ private:
      return p;
    }
 
+	 Node* insert(Node *p, Key k, Data d) {
+		 if (!p) return new Node(k, d);
+		 if (k < p->key)
+			 p->left = insert(p->left, k, d);
+		 else
+			 p->right = insert(p->right, k, d);
+		 return balance(p);
+	 }
 
-  
-		void print()const {
-			if (left) left->print();
-			std::cout << key << " - " << v << "\n";
-			if (right) right->print();
-		}
+	 Node* findmin(Node* p) {
+		 return p->left ? findmin(p->left) : p;
+	 }
 
-	private:
-    unsigned char height;    //the height of the subtree (actually, the difference of heights)
-		Node * left;
-		Node * right;
-		K key;
-		V v;
-	};
-  Node *root;
+	 Node* removemin(Node* p) {
+		 if (p->left == 0)
+			 return p->right;
+		 p->left = removemin(p->left);
+		 return balance(p);
+	 }
+
+	 Node* remove(Node* p, int k) {
+		 if (!p) return 0;
+		 if (k < p->key)
+			 p->left = remove(p->left, k);
+		 else if (k > p->key)
+			 p->right = remove(p->right, k);
+		 else //  k == p->key 
+		 {
+			 Node* q = p->left;
+			 Node* r = p->right;
+			 delete p;
+			 if (!r) return q;
+			 Node* min = findmin(r);
+			 min->right = removemin(r);
+			 min->left = q;
+			 return balance(min);
+		 }
+		 return balance(p);
+	 }
 };

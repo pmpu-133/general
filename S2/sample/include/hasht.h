@@ -6,11 +6,20 @@
 
 
 
-template<typename K> size_t hasher(const K& k) {
-	size_t res = k & 0xFF;
-	for (int c = 1; c < sizeof(k); ++c)
-		res += (k >> 8) & 0xFF;
-	return res;
+unsigned int RSHash(const char* str, unsigned int length)
+{
+	unsigned int b = 378551;
+	unsigned int a = 63689;
+	unsigned int hash = 0;
+	unsigned int i = 0;
+
+	for (i = 0; i < length; ++str, ++i)
+	{
+		hash = hash * a + (*str);
+		a = a * b;
+	}
+
+	return hash;
 }
 
 template<typename K, 	typename V> class hasht {
@@ -31,7 +40,7 @@ public:
 
 
 	void AddData(const K& k, const V& value) {
-    size_t cellind = hasher<K>(k);
+/*    size_t cellind = hasher<K>(k);
 		cellind %= 256;
 		if (m_Storage[cellind] != nullptr){
 			size_t probe = (cellind + 1) % 256;
@@ -41,7 +50,7 @@ public:
 			throw 42;
 		cellind = probe;
 	}
-	m_Storage.changeValue(cellind, new V(value));
+	m_Storage.changeValue(cellind, new V(value));*/
 }
 
 /*	bool hasK(const K& k)const {

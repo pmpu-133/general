@@ -1,6 +1,6 @@
 #pragma once
 #include <iostream>
-#include "pch.h"
+#include "stdafx.h"
 
 
 using namespace std;

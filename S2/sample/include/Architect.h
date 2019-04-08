@@ -1,7 +1,7 @@
 ﻿#pragma once		
 #include "objects.h"
 #include "hasht.h"
-#include "pch.h"
+#include "stdafx.h"
 
 
 
