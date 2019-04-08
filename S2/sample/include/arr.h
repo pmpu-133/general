@@ -1,5 +1,5 @@
 #pragma once
-#include "pch.h"
+#include "stdafx.h"
 
 template<typename Data> class Array {
 public:
@@ -20,6 +20,15 @@ public:
 		for (size_t i = 0; i < size; ++i)
 			*(arr + i) = original.getValue(i);
 	};
+
+	void operator=(const Array<Data>& original) {
+		clear();
+		size = original.Size();
+		arr = new Data[size];
+		for (size_t i = 0; i < size; ++i)
+			*(arr + i) = original.getValue(i);
+	};
+
 	~Array() {
 		clear();
 	};
@@ -127,10 +136,10 @@ public:
 			size--;
 		}
 	};
-	Data operator[](int ind) {
+	Data& operator[](int ind) {
 		if ((ind < size) && (ind > -1))
 			return *(arr + ind);
-		throw 42;
+		throw std::invalid_argument("Index values out of bounds");
 	};
 private:
 	Data * arr;
