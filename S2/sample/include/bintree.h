@@ -11,13 +11,10 @@ public:
 	}
 
 	~bintree() {
-		
+    root = clear(root);
 	}
 	
-	void clear() {
-	   //Node* p = findmin(root);
-
-	}
+  
 			
 	void push(const Key& k, const Data& value) {
 		if (!root)
@@ -31,8 +28,10 @@ public:
 		root = remove(root,k);
 	}
 
-  void print() {  
-    root->print();
+  void print() {
+    if (root)
+      root->print();
+    else std::cout << "No tree" << std::endl;
   }
 
   bool hasK(const Key& k)const {
@@ -77,11 +76,12 @@ private:
  
 		void print()const {
 			if (left) left->print();
+      else std::cout << "No tree" << std::endl;
 			std::cout << key << " - " << v << "\n";
 			if (right) right->print();
 		}
 
-    unsigned char height;    //the height of the subtree (actually, the difference of heights)
+    unsigned char height;    //the height of the subtree 
 		Node * left;
 		Node * right;
 		Key key;
@@ -89,7 +89,7 @@ private:
 	};
   Node *root;
 	
-	unsigned char getHeight(Node* p)const {
+	   unsigned char getHeight(Node* p)const {
       if (p != nullptr)
         return p->height;
        else
@@ -141,7 +141,8 @@ private:
    }
 
 	 Node* insert(Node *p, Key k, Data d) {
-		 if (!p) return new Node(k, d);
+		 if (!p)
+       return new Node(k, d);
 		 if (k < p->key)
 			 p->left = insert(p->left, k, d);
 		 else
@@ -179,4 +180,14 @@ private:
 		 }
 		 return balance(p);
 	 }
+   
+   Node* clear(Node* p) {
+     if (!p) return p;
+     while ((p->left != nullptr) && (p->right != nullptr)) {
+       p = remove(p, findmin(p)->key);
+     };
+     delete p;
+     return p;
+   }
+
 };
