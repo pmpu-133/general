@@ -21,10 +21,10 @@ public:
 	{
 		pit(kor);
 	}
-	Data operator[](Key k)
+	Data& operator[](Key k)
 	{
 		node* p = kor;
-		while (p->key != k && p != nullptr)
+		while (p != nullptr && p->key != k)
 		{
 			if (p->key > k)
 				p = p->left;
@@ -33,6 +33,12 @@ public:
 		}
 		if (p != nullptr)
 			return p->data;
+		else
+		{
+			return insert(p, k, null)->data;
+
+		}
+		
 	}
 
 
@@ -54,7 +60,7 @@ private:
 	};
 
 	node* kor;
-
+	Data null;
 	void pit(node *n)
 	{
 		if (n != nullptr) {
