@@ -1,72 +1,109 @@
-#pragma once
+﻿#pragma once
 
 #include "arr.h"
 #include "List.h"
 
-
-
-
-unsigned int RSHash(const char* str, unsigned int length)
-{
-	unsigned int b = 378551;
-	unsigned int a = 63689;
-	unsigned int hash = 0;
-	unsigned int i = 0;
-
-	for (i = 0; i < length; ++str, ++i)
-	{
-		hash = hash * a + (*str);
-		a = a * b;
-	}
-
-	return hash;
-}
-
-template<typename K, 	typename V> class hasht {
-
+template<typename T> class simple_hasher {
 public:
-	hasht() {
-		m_Storage = Array<V*>(256);
-		for (int c = 0; c < 256; ++c)
-			m_Storage.changeValue(c, nullptr);
-	}
+  size_t operator()(const T&t) {
+    unsigned char* dataptr = (unsigned char*)(&t);
+    size_t res = 0;
+    for (size_t k = 0; k < sizeof(T); ++k) {
+      res += *dataptr;
+      ++dataptr;
+    }
+    return res;
+  }
+};
 
-	~hasht() {
-		for (int i = 0; i < m_Storage.Size(); ++i)
-			if (m_Storage[i] != nullptr) 
-        delete m_Storage[i];
-		m_Storage.clear();
-	}
+class idhasher {
+public:/*
+  size_t operator()(const Id&) {
+    return 0;
+  }*/
+};
+
+template<typename K, typename V, typename hasher > class hasht {
+public:
+  hasht();
+  ~hasht();
+  void AddData(const K& k, const V&value); 
+  bool hasK(const K& k)const;
+  V operator[](const K&k)const;
+  void validate() {
+    size_t notNullCount = 0;
+    for (size_t k = 0; k < m_Storage.getSize(); ++k) {
+      //std::cout << k << '\t' << m_Storage[k] << std::endl;
+      if (m_Storage[k] != nullptr) ++notNullCount;
+    }
+    if (notNullCount != m_size)
+      throw 42;
+  };
+
+private:
+  Array<V*> m_Storage;
+  size_t m_size;
+};
 
 
-	void AddData(const K& k, const V& value) {
-/*    size_t cellind = hasher<K>(k);
-		cellind %= 256;
-		if (m_Storage[cellind] != nullptr){
-			size_t probe = (cellind + 1) % 256;
-		while (probe != cellind && m_Storage[cellind] != nullptr)
-			++probe %= 256;
-		if (m_Storage[probe] != nullptr)
-			throw 42;
-		cellind = probe;
-	}
-	m_Storage.changeValue(cellind, new V(value));*/
+
+template<typename K, typename V, typename hasher> hasht<K, V, hasher>::hasht() {
+  m_Storage = Array<V*>(256);
+  for (int c = 0; c < 256; ++c) {
+    //std::cout << c << '\t' << m_Storage[c] << std::endl;
+    m_Storage[c] = nullptr;
+    //std::cout <<c << '\t' << m_Storage[c] << std::endl;
+  }
+  //std::cout << 0 << '\t' << m_Storage[0] << std::endl;
+  m_size = 0;
+  validate();
 }
 
-/*	bool hasK(const K& k)const {
-		size_t cellind = hasher<K>(k);
-		cellind %= 256;
-		return m_Storage[cellind] == nullptr;
-	}*/
 
-	V operator[](const K& k)const {
-		size_t cellind = hasher<K>(k);
-		cellind %= 256;
-		return *m_Storage[cellind];
-	}
+template<typename K, typename V, typename hasher> hasht<K, V, hasher>::~hasht() {
+  for (int c = 0; c < 256; ++c)
+    if (m_Storage[c] != nullptr)
+      delete m_Storage[c];
+}
 
-	
-private:
-	Array<V*> m_Storage;
 
-};
+template<typename K, typename V, typename hasher> void hasht<K, V, hasher>::AddData(const K& k, const V&value) {
+  //std::cout << "--------------------" << std::endl;
+  simple_hasher<K> t;
+  size_t cellind = t(k);
+  cellind %= 256;
+  if (m_Storage[cellind] != nullptr) {
+    size_t probe = (cellind + 1) % 256;
+    while (probe != cellind && m_Storage[probe] != nullptr) {
+      ++probe %= 256;
+
+      //std::cout << "Probe " << probe << '\t' << (m_Storage[probe] != nullptr)  << std::endl;
+
+    }
+    if (m_Storage[probe] != nullptr)
+      throw std::out_of_range("Table is full");
+
+    cellind = probe;
+  }
+
+  m_Storage[cellind] = new V(value);
+  ++m_size;
+  validate();
+}
+
+
+template<typename K, typename V, typename hasher> bool hasht<K, V, hasher>::hasK(const K&k)const {
+  simple_hasher<K> t;
+  size_t cellind = t(k);
+  cellind %= 256;
+  V* v = m_Storage.getValue(cellind);
+  return v == nullptr;
+}
+
+
+template<typename K, typename V, typename hasher> V hasht<K, V, hasher>::operator[](const K&k)const {
+  simple_hasher<K> t;
+  size_t cellind = t(k);
+  cellind %= 256;
+  return *m_Storage[cellind];
+}
