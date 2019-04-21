@@ -6,11 +6,11 @@
 template<typename T> class simple_hasher {
 public:
   size_t operator()(const T&t) {
-    unsigned char* dataptr = (unsigned char*)(&t);
+    unsigned char* p = (unsigned char*)&t;
     size_t res = 0;
-    for (size_t k = 0; k < sizeof(T); ++k) {
-      res += *dataptr;
-      ++dataptr;
+    for (int k = 0; k < sizeof(T); ++k) {
+      res += *p;
+      ++p;
     }
     return res;
   }
@@ -23,7 +23,7 @@ public:/*
   }*/
 };
 
-template<typename K, typename V, typename hasher > class hasht {
+template<typename K, typename V, typename hasher = simple_hasher<K> > class hasht {
 public:
   hasht();
   ~hasht();
