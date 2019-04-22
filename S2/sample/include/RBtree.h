@@ -1,5 +1,8 @@
 #pragma once
 
+#include "stdafx.h"
+#include <iostream>
+
 
 template <typename Key, typename Data> class RBtree {
 public:

@@ -4,15 +4,18 @@
 #include "AVLtree.h"
 #include <iostream>
 
+
 struct HuffNode {
   unsigned val;
   HuffNode *left, *right;
 };
 
+
 template<typename T1, typename T2> struct para {
   T1 v1;
   T2 v2;
 };
+
 
 
 bool elemIsIn(int elem, int* arr, size_t n) {
@@ -22,9 +25,37 @@ bool elemIsIn(int elem, int* arr, size_t n) {
   return false;
 }
 
-Array <para<unsigned char, size_t> > calcStats(std::istream& ist) {
 
+/*Array <para<unsigned char, size_t> > calcStats(std::istream& ist) {
+
+}*/
+
+
+Array<HuffNode*> getTree(Array<HuffNode*> tree) {
+  Array<HuffNode*> newtree;
+  int i = 0;
+  while (!tree.isVoid()) {
+    if (tree.getSize() != 1) {
+      newtree[i] = new HuffNode;
+      newtree[i]->left = tree[0];
+      newtree[i]->right = tree[1];
+      newtree[i]->val = tree[0]->val + tree[1]->val;
+      tree.deleteElement(0);
+      tree.deleteElement(1);
+      i++;
+    }
+    else {
+      newtree[i] = new HuffNode;
+      newtree[i]->left = tree[0];
+      newtree[i]->right = newtree[0];
+      newtree.deleteElement(0);
+      tree.deleteElement(0);
+      i++;
+    }
+  }
+  return newtree;
 }
+
 
 HuffNode* buildHufftree(Array< para<unsigned char, size_t> > &symbols_w_freq) {
   for (int k = 0; k < symbols_w_freq.getSize(); ++k)
@@ -69,29 +100,5 @@ HuffNode* buildHufftree(Array< para<unsigned char, size_t> > &symbols_w_freq) {
   return Rtree;
 };
 
-Array<HuffNode*> getTree(Array<HuffNode*> tree) {
-  Array<HuffNode*> newtree;
-  int i = 0;
-  while (!tree.isVoid()) {
-    if (tree.getSize() != 1) {
-      newtree[i] = new HuffNode;
-      newtree[i]->left = tree[0];
-      newtree[i]->right = tree[1];
-      newtree[i]->val = tree[0]->val + tree[1]->val;
-      tree.deleteElement(0);
-      tree.deleteElement(1);
-      i++;
-    }
-    else {
-      newtree[i] = new HuffNode;
-      newtree[i]->left = tree[0];
-      newtree[i]->right = newtree[0];
-      newtree.deleteElement(0);
-      tree.deleteElement(0);
-      i++;
-    }
-  }
-  return newtree;
-}
 
 AVLtree<unsigned char, Array<bool> >  tree2table(HuffNode*);

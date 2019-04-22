@@ -1,5 +1,7 @@
 #pragma once
 
+#include "stdafx.h"
+#include <iostream>
 
 template<typename Data> class list {
 public:
