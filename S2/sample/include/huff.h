@@ -35,7 +35,7 @@ Array<HuffNode*> getTree(Array<HuffNode*> tree) {
   Array<HuffNode*> newtree;
   int i = 0;
   while (!tree.isVoid()) {
-    if (tree.getSize() != 1) {
+    if (tree.Size() != 1) {
       newtree[i] = new HuffNode;
       newtree[i]->left = tree[0];
       newtree[i]->right = tree[1];
@@ -58,8 +58,8 @@ Array<HuffNode*> getTree(Array<HuffNode*> tree) {
 
 
 HuffNode* buildHufftree(Array< para<unsigned char, size_t> > &symbols_w_freq) {
-  for (int k = 0; k < symbols_w_freq.getSize(); ++k)
-    for (int j = 0; j < symbols_w_freq.getSize(); ++j) {
+  for (int k = 0; k < symbols_w_freq.Size(); ++k)
+    for (int j = 0; j < symbols_w_freq.Size(); ++j) {
       if (symbols_w_freq[k].v2 > symbols_w_freq[j].v2) {
         para<unsigned char, size_t> temp;
         temp.v1 = symbols_w_freq[k].v1;
@@ -75,7 +75,7 @@ HuffNode* buildHufftree(Array< para<unsigned char, size_t> > &symbols_w_freq) {
   while (!symbols_w_freq.isVoid()) {
     HuffNode node;
     temp[k] = new HuffNode;
-    if (symbols_w_freq.getSize() != 1) {
+    if (symbols_w_freq.Size() != 1) {
       temp[k]->val = symbols_w_freq[0].v2 + symbols_w_freq[1].v2;
       temp[k]->left->val = symbols_w_freq[0].v1;
       temp[k]->right->val = symbols_w_freq[1].v1;
@@ -94,7 +94,7 @@ HuffNode* buildHufftree(Array< para<unsigned char, size_t> > &symbols_w_freq) {
   }
   //get sorted array with nodes
   Array<HuffNode*> tree;
-  while (tree.getSize() != 1)
+  while (tree.Size() != 1)
     tree = getTree(tree);
   HuffNode* Rtree = tree[0];
   return Rtree;

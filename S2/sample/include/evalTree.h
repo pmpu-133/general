@@ -8,6 +8,7 @@ struct evalNode{
   evalNode(): left(nullptr), right(nullptr) {}
   virtual double eval() { return 0;}
   virtual void print() {}
+  virtual ~evalNode() {/*std::cout << "evalNode deleted" << std::endl;*/}
 };
 
 
@@ -15,7 +16,8 @@ struct evalConst : public evalNode {
   evalConst(double v) :val(v) {}
   double eval() { return val; };
   void print() {std::cout << " " << val << " "; }
-  double val;
+  double val; 
+  ~evalConst() { /*std::cout << "evalConst deleted with value " << val << std::endl;*/ }
 };
 
 
@@ -54,13 +56,16 @@ struct evalOp : public evalNode {
     }
   }
   opCode code;
+  ~evalOp() { /*std::cout << "evalOp deleted with code " << code << std::endl;*/ }
 };
 
 // дерево для представления арифметического выражения
 class evalTree {
 public:
   evalTree();
-  ~evalTree() { clear(m_pRoot); }
+  evalTree(std::string &expression);
+  ~evalTree();
+
   double eval() {
     if (m_pRoot) {
       m_pRoot->print();

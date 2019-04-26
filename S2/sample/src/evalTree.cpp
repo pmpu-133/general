@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "pch.h"
 #include "evalTree.h"
 
 evalTree::evalTree() {
@@ -24,18 +24,26 @@ evalTree::evalTree() {
   par->left = tmp;
   par->right = cur;
   m_pRoot->right = par;
+}
 
+
+evalTree::~evalTree() { 
+  clear(m_pRoot); 
+  /*std::cout << "evalTree deleted" << std::endl;*/
 }
 
 
 void evalTree::clear(evalNode *node) {
-  if (!node) {
+  if (!node)
+    throw std::runtime_error("Bad pointers");
+  else {
     if (!node->left && !node->right) {
       delete node;
       return;
     }
     clear(node->left);
     clear(node->right);
+    delete node;
   }
-  throw std::runtime_error("Bad pointers");
 }
+

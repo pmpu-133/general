@@ -32,7 +32,7 @@ public:
   V operator[](const K&k)const;
   void validate() {
     size_t notNullCount = 0;
-    for (size_t k = 0; k < m_Storage.getSize(); ++k) {
+    for (size_t k = 0; k < m_Storage.Size(); ++k) {
       //std::cout << k << '\t' << m_Storage[k] << std::endl;
       if (m_Storage[k] != nullptr) ++notNullCount;
     }
