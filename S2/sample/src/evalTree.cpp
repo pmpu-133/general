@@ -3,8 +3,8 @@
 
 evalTree::evalTree() {
   evalNode *cur = nullptr;
-  cur = new evalConst(2);
-  evalNode *tmp = new evalConst(5);
+  cur = new evalConst(5);
+  evalNode *tmp = new evalConst(2);
 
   evalNode *par = new evalOp(OC_MUL);
   par->left = cur;
@@ -25,6 +25,31 @@ evalTree::evalTree() {
   par->right = cur;
   m_pRoot->right = par;
 }
+
+
+evalNode* getNodePtr(const char& c) {
+    if (c == '*')
+      return new evalOp(OC_MUL);
+    if (c == '/')
+      return new evalOp(OC_DIV);
+    if (c == '+')
+      return new evalOp(OC_SUM);
+    if (c == '-')
+      return new evalOp(OC_SUB);
+    return new evalConst(c);
+};
+
+evalTree::evalTree(std::string &expression) {
+ 
+  Array<evalNode*> pSymbols(expression.length());
+  for (int i = 0; i < expression.length(); ++i) 
+    pSymbols[i] = getNodePtr(expression[i]);
+ 
+
+  for (int i = 0; i < expression.length(); ++i)
+    pSymbols[i]->print();
+ //???
+};
 
 
 evalTree::~evalTree() { 

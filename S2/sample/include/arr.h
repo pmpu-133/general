@@ -1,6 +1,6 @@
 #pragma once
 
-#include "stdafx.h"
+#include "pch.h"
 #include <iostream>
 
 template<typename Data> class Array {
@@ -57,7 +57,7 @@ public:
   
   void clear();
   void addData(Array a, Data data);
-  size_t getSize()const;
+  size_t Size()const;
   Data getValue(size_t i)const;
   void changeValue(size_t i, Data data);
   void printArray();
@@ -218,7 +218,7 @@ template<typename Data> Array<Data>::Array(size_t n) {
 
 
 template<typename Data> Array<Data>::Array(const Array &original) {
-  size = original.getSize();
+  size = original.Size();
   arr = new Data[size];
   for (size_t i = 0; i < size; ++i)
     *(arr + i) = original.getValue(i);
@@ -279,18 +279,18 @@ template<typename Data> void Array<Data>::clear() {
 
 
 template<typename Data> void Array<Data>::addData(Array a, Data data) {
-  Data* tmp = new Data[a.getSize()];
-  for (int i = 0; i < a.getSize(); ++i)
+  Data* tmp = new Data[a.Size()];
+  for (int i = 0; i < a.Size(); ++i)
     tmp[i] = a.getValue(i);
   arr = new Data[size + 1];
-  for (int i = 0; i < a.getSize(); ++i)
+  for (int i = 0; i < a.Size(); ++i)
     arr[i] = tmp[i];
   arr[size] = data;
   size++;
 }
 
 
-template<typename Data> size_t Array<Data>::getSize()const {
+template<typename Data> size_t Array<Data>::Size()const {
   return size;
 }
 
@@ -313,7 +313,7 @@ template<typename Data> void Array<Data>::printArray() {
   if (arr)
     for (size_t i = 0; i < size; ++i)
       std::cout << *(arr + i) << " ";
-  else cout << "No array" << endl;
+  else std::cout << "No array" << std::endl;
 }
 
 
