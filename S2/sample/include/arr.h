@@ -325,7 +325,7 @@ template<typename Data> bool Array<Data>::isVoid()const {
 template<typename Data> void Array<Data>::deleteElement(size_t i) {
   if (0 <= i && i < size) {
     for (int j = i; j < size - 1; ++j)
-      *(arr + i) = *(arr + j + 1);
+      *(arr + j) = *(arr + j + 1);
     size--;
   }
   else 

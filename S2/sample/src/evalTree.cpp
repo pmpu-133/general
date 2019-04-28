@@ -2,7 +2,8 @@
 #include "evalTree.h"
 
 evalTree::evalTree() {
-  evalNode *cur = nullptr;
+  m_pRoot = nullptr;
+  /*evalNode *cur = nullptr;
   cur = new evalConst(5);
   evalNode *tmp = new evalConst(2);
 
@@ -23,7 +24,7 @@ evalTree::evalTree() {
   cur = new evalConst(2);
   par->left = tmp;
   par->right = cur;
-  m_pRoot->right = par;
+  m_pRoot->right = par;*/
 }
 
 
@@ -40,17 +41,33 @@ evalNode* getNodePtr(const char& c) {
 };
 
 evalTree::evalTree(std::string &expression) {
- 
+
   Array<evalNode*> pSymbols(expression.length());
-  for (int i = 0; i < expression.length(); ++i) 
+  for (int i = 0; i < pSymbols.Size(); ++i)
     pSymbols[i] = getNodePtr(expression[i]);
- 
 
-  for (int i = 0; i < expression.length(); ++i)
-    pSymbols[i]->print();
- //???
-};
 
+  for (int i = 0; i < pSymbols.Size(); ++i)
+    if (pSymbols[i]->getSymbol() == '*' || pSymbols[i]->getSymbol() == '/')
+      if (!pSymbols[i]->left && !pSymbols[i]->right) {
+        pSymbols[i]->left = pSymbols[i - 1];
+        pSymbols[i]->right = pSymbols[i + 1];
+        pSymbols.deleteElement(i - 1);
+        --i;
+        pSymbols.deleteElement(i + 1);
+      }
+
+  for (int i = 0; i < pSymbols.Size(); ++i)
+    if (pSymbols[i]->getSymbol() == '+' || pSymbols[i]->getSymbol() == '-')
+      if (!pSymbols[i]->left && !pSymbols[i]->right) {
+        pSymbols[i]->left = pSymbols[i - 1];
+        pSymbols[i]->right = pSymbols[i + 1];
+        pSymbols.deleteElement(i - 1);
+        --i;
+        pSymbols.deleteElement(i + 1);
+      }
+  m_pRoot = pSymbols[0];
+}
 
 evalTree::~evalTree() { 
   clear(m_pRoot); 
