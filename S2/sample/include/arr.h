@@ -61,6 +61,11 @@ public:
   void addData(Array a, Data data);
   size_t Size()const;
   Data getValue(size_t i)const;
+  Data getLast()const {
+    if (!isVoid())
+      return *(arr + size - 1);
+    else throw std::logic_error("No array");
+  }
   void changeValue(size_t i, Data data);
   void printArray();
   bool isVoid()const;
