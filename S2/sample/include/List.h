@@ -1,14 +1,34 @@
 #pragma once
 
-#include "pch.h"
+#include "stdafx.h"
 #include <iostream>
+
+#include <stdexcpt.h>
 
 template<typename Data> class list {
 public:
-  list() : first(nullptr), last(nullptr) {}
+  list() : first(nullptr), last(nullptr), size(0) {}
   list(Data d);
   list(const list &original);
   ~list();
+
+  size_t Size()const {
+    return size;
+  }
+
+  Data getFirst() {
+    if (this->Size() > 0)
+      return first->data;
+    else
+      throw std::logic_error("List is empty!");
+  }
+
+  void deleteFirstElement() {
+    cell* tmp = first;
+    first = first->next;
+    delete tmp;
+    size--;
+  }
 
   void operator=(const list<Data>& original);
 
@@ -67,12 +87,14 @@ public:
 private:
   cell * first;
   cell * last;
+  size_t size;
 };
 
 
 
 
 template<typename Data> list<Data>::list(Data d) {
+  size = 0;
   first = nullptr;
   last = nullptr;
   addData(d);
@@ -80,6 +102,7 @@ template<typename Data> list<Data>::list(Data d) {
 
 
 template<typename Data> list<Data>::list(const list &original) {
+  size = 0;
   first = nullptr;
   last = nullptr;
   if (original.first != nullptr) {
@@ -114,11 +137,14 @@ template<typename Data> void list<Data>::operator=(const list<Data>& original) {
 template<typename Data>  void list<Data>::clear() {
   list::Pointer pointer = this->getFirstPtr();
   while (pointer.canMoveNext()) {
-    cell* toDelete = pointer.currentPos();
+    cell* toDelete = pointer.getCurrentPtr();
     pointer++;
     delete toDelete;
   }
 }
+
+
+
 
 
 template<typename Data> void list<Data>::Pointer::rewind() {
@@ -148,6 +174,7 @@ template<typename Data> bool list<Data>::Pointer::canMoveBack()const {
 
 
 template<typename Data> void list<Data>::addData(Data newdata) {
+  size++;
   cell* newcell = new cell;
   newcell->data = newdata;
   newcell->next = nullptr;

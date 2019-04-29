@@ -1,7 +1,9 @@
 #pragma once
 
-#include "pch.h"
+#include "stdafx.h"
 #include <iostream>
+
+#include <stdexcpt.h>
 
 template<typename Data> class Array {
 public:
