@@ -1,0 +1,9 @@
+﻿  Stack.cpp
+C:\Users\Admin\Desktop\Stack\Stack\formula.h(87): warning C4018: '<': signed/unsigned mismatch
+  C:\Users\Admin\Desktop\Stack\Stack\formula.h(84): note: while compiling class template member function 'void FormulaParser<qu<FormulaNode>>::parse(const char *)'
+  C:\Users\Admin\Desktop\Stack\Stack\Stack.cpp(20): note: see reference to function template instantiation 'void FormulaParser<qu<FormulaNode>>::parse(const char *)' being compiled
+  C:\Users\Admin\Desktop\Stack\Stack\Stack.cpp(18): note: see reference to class template instantiation 'FormulaParser<qu<FormulaNode>>' being compiled
+C:\Users\Admin\Desktop\Stack\Stack\formula.h(149): warning C4715: 'operator>': not all control paths return a value
+C:\Users\Admin\Desktop\Stack\Stack\formula.h(46): warning C4715: 'FormulaNode::oper': not all control paths return a value
+C:\Users\Admin\Desktop\Stack\Stack\List.h(53): warning C4172: returning address of local variable or temporary: result
+  Stack.vcxproj -> C:\Users\Admin\Desktop\Stack\Debug\Stack.exe
