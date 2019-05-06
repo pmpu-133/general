@@ -108,3 +108,36 @@ private:
   static int LastGiven;
   list<para<list<SiInfo*> > >    m_Ele_Situations;
 };
+
+
+
+
+class CommonConstraint {
+public:
+  virtual double error();
+};
+
+class SectionOrtho : public CommonConstraint {
+public:
+  virtual double error();
+};
+
+class SectionAngle : public CommonConstraint {
+public:
+  virtual double error();
+};
+
+class SectionParalle : public CommonConstraint {
+public:
+  virtual double error();
+};
+
+class PointOnPoint : public CommonConstraint {
+public:
+  virtual double error();
+};
+
+class PointOnSection : public CommonConstraint {
+public:
+  virtual double error();
+};

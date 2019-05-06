@@ -84,7 +84,9 @@ std::ostream& operator<< (std::ostream& ost, const FormulaNode& node) {
 }
 
 
-bool operator<(const Operators& op1, const Operators& op2) {
+bool operator> (const Operators& op1, Operators& op2) {
+  if (op1 == OPEN_BRACKET)
+    return true;
   if (op1 == DIV || op1 == MUL)
     return true;
   if (op1 == SUM || op1 == SUB)
@@ -98,8 +100,6 @@ template<typename Q> class FormulaParser {
 public:
   FormulaParser() { m_qu = nullptr;}
   void setResult(Q *q) {  m_qu = q; }
-
- 
 
   void parse(const char* formula) {
     if (m_qu == nullptr)
@@ -136,27 +136,52 @@ private:
 
 
 template<typename Q> class DijkstraSorter {
+public:
+  DijkstraSorter() {
+    m_input = nullptr;
+    m_output = nullptr;
+  }
   void setInput(Q*q) { m_input = q;}
   void setOutput(Q*q) { m_output = q;}
   void run() {
     while (!m_input->empty()) {
-      FormulaNode node = m_input->getFirst();
-      if (node.isOperand) {
+      FormulaNode node = m_input->getfirst();
+      if (node.isOperand()) {
         m_output->push(node);
       }
       else {
-        if (m_sta.empte())
+        if (m_sta.empty())
           m_sta.push(node);
         else {
-          if (node.oper() > m_sta.looktop().oper()) {
+
+          switch (node.oper()) {
+
+          case OPEN_BRACKET:
             m_sta.push(node);
-          }
-          else {
-            while (m_sta.empty() && node.oper() > !(m_sta.looktop().oper())) {
+            break;
+          case CLOSE_BRACKET:
+            while (!m_sta.empty() && node.oper() != OPEN_BRACKET) {
               m_output->push(m_sta.looktop());
               m_sta.pop();
             }
+            m_sta.pop();
+            m_input->getfirst();
+
+          default:
+            if (node.oper() > m_sta.looktop().oper()) {
+              m_sta.push(node);
+            }
+            else {
+              while (!m_sta.empty() && !(node.oper() > m_sta.looktop().oper())) {
+                m_output->push(m_sta.looktop());
+                m_sta.pop();
+              }
+            }
+
+            break;
           }
+
+
         }
       }
     }
@@ -169,9 +194,42 @@ private:
 
 
 template<typename Q>  double evaluate(Q&q) {
+  stakk<FormulaNode> sta;
+
   while (!q.empty()) {
-    
+    FormulaNode node = q.getfirst();
+    if (node.isOperand())
+      sta.push(node);
+    else {
+      FormulaNode op1 = sta.looktop(); sta.pop();
+      FormulaNode op2 = sta.looktop(); sta.pop();
+
+      if (op1.isOperand() && op2.isOperand()) {
+        double r = 0;
+        switch (node.oper()) {
+        case SUM: 
+          r = op1.value() + op2.value();
+          break;
+        case SUB:
+          r = op2.value() - op1.value();
+          break;
+        case MUL:
+          r = op1.value() * op2.value();
+          break;
+        case DIV:
+          r = op2.value() / op1.value();
+          break;
+        }
+        sta.push(FormulaNode(r));
+      }
+
+    }
   }
+  if (!sta.empty())
+    return sta.looktop().value();
+  else 
+    throw std::logic_error("No evalution");
+
 };
 
 
