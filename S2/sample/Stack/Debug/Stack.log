@@ -1,0 +1,22 @@
+﻿  Stack.cpp
+C:\Users\Admin\Desktop\Stack\Stack\Stack.h(10): error C2039: 'addData': is not a member of 'Array<T>'
+          with
+          [
+              T=Operators
+          ]
+  C:\Users\Admin\Desktop\Stack\Stack\Stack.h(29): note: see declaration of 'Array<T>'
+          with
+          [
+              T=Operators
+          ]
+  C:\Users\Admin\Desktop\Stack\Stack\Stack.h(9): note: while compiling class template member function 'void stakk<Operators>::push(const T &)'
+          with
+          [
+              T=Operators
+          ]
+  C:\Users\Admin\Desktop\Stack\Stack\Stack.cpp(15): note: see reference to function template instantiation 'void stakk<Operators>::push(const T &)' being compiled
+          with
+          [
+              T=Operators
+          ]
+  C:\Users\Admin\Desktop\Stack\Stack\Stack.cpp(13): note: see reference to class template instantiation 'stakk<Operators>' being compiled
