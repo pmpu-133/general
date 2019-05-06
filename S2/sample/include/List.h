@@ -1,6 +1,6 @@
 #pragma once
 
-#include "pch.h"
+#include "stdafx.h"
 #include <iostream>
 
 #include <stdexcpt.h>
@@ -17,7 +17,7 @@ public:
   }
 
   Data getFirst() {
-    if (this->Size() > 0)
+    if (size > 0)
       return first->data;
     else
       throw std::logic_error("List is empty!");

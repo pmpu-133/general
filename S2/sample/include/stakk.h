@@ -3,7 +3,7 @@
 #include "arr.h"
 
 
-enum Operators {SUM, SUB, MUL, DIV, OPEN_BRACKET};
+enum Operators {SUM, SUB, MUL, DIV, OPEN_BRACKET, CLOSE_BRACKET};
 
 template <typename T> class stakk {
 public:

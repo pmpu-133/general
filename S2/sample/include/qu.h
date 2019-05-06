@@ -4,6 +4,8 @@
 
 template <typename T> class qu {
 public:
+ 
+
 
   void push(const T& data) {
       m_storage.addData(data);

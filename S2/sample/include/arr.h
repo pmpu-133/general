@@ -1,6 +1,6 @@
 #pragma once
 
-#include "pch.h"
+#include "stdafx.h"
 #include <iostream>
 
 #include <stdexcpt.h>
@@ -282,6 +282,8 @@ template<typename Data> Data& Array<Data>::Pointer::operator=(const Data& data) 
 template<typename Data> void Array<Data>::clear() {
   if (!isVoid())
     delete[] arr;
+  else
+    throw std::logic_error("No array");
 }
 
 
