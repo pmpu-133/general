@@ -183,92 +183,39 @@ private:
 
 
 template<typename Q>  double evaluate(Q & q) {
-	while (!q.empty()) {
+	stakk <FormulaNode> sta;
 
+	while (!q.empty()) {
+		FormulaNode node = q.getfirst();
+		if (node.isOperand())
+			sta.push(node);
+		else {
+			FormulaNode op1 = sta.looktop(); sta.pop();
+			FormulaNode op2 = sta.looktop(); sta.pop();
+
+			if (op1.isOperand() && op2.isOperand()) {
+				double r = 0;
+				switch (node.oper()) {//write up
+				case SUM:
+					r = op1.value() + op2.value();
+					break;
+				case DIV:
+					r = op1.value() / op2.value();
+					break;
+				case MUL:
+					r = op1.value() * op2.value();
+					break;
+				case SUB:
+					r = op1.value() - op2.value();
+					break;
+				//case OPEN_BRACKET:
+				//case CLOSE_BRACKET:
+				//default: 
+
+				}
+				sta.push(FormulaNode(r));
+					
+			}
+		}
 	}
 };
-
-
-
-/*void fromBaseToPost(string str) {
-  stakk<Operators> stack;
-  qu<FormulaNode> queue;
-  for (int i = 0; i < str.size(); ++i) {
-	double ch = 0;
-	if (str[i] >= 48 && str[i] <= 57) {
-	  ch = ch * 10;
-	  ch += str[i] - '0';
-	}
-	int counter = 0;
-	if (str[i] == ',') {
-	  ++i;
-	  while (str[i] != '+' || str[i] != '-' || str[i] != '*' || str[i] != '/') {
-		counter--;
-		ch += (str[i] - '0') * pow(10, counter);
-	  }
-	}
-	FormulaNode o(ch);
-	queue.push(o);
-	if (str[i] != '+' || str[i] != '-' || str[i] != '*' || str[i] != '/' || str[i] == '(' || str[i] == ')') {
-	  if (stack.empty())
-		switch (str[i]) {
-		case'+':
-		  stack.push(SUM);
-		case'-':
-		  stack.push(SUB);
-		case'*':
-		  stack.push(MUL);
-		case'/':
-		  stack.push(DIV);
-		case'(':
-		  stack.push(OPEN_BRACKET);
-		}
-	  else {
-		switch (str[i]) {
-		case'+':
-		  if (Compare(SUM, stack.looktop()))
-			stack.push(SUM);
-		  else
-			while (!stack.empty()) {
-			  FormulaNode o;
-			  o.setOp(stack.looktop());
-			  queue.push(o);
-			  stack.pop();
-			}
-		case'-':
-		  if (Compare(SUB, stack.looktop()))
-			stack.push(SUB);
-		  else
-			while (!stack.empty()) {
-			  FormulaNode o;
-			  o.setOp(stack.looktop());
-			  queue.push(o);
-			  stack.pop();
-			}
-		case'*':
-		  if (Compare(MUL, stack.looktop()))
-			stack.push(MUL);
-		case'/':
-		  if (Compare(MUL, stack.looktop()))
-			stack.push(DIV);
-		case'(':
-		  stack.push(OPEN_BRACKET);
-		case')':
-		  while (stack.looktop() != ')') {
-			FormulaNode o;
-			o.setOp(stack.looktop());
-			queue.push(o);
-			stack.pop();
-		  }
-		  stack.pop();
-		}
-	  }
-	}
-  }
-  while (!stack.empty()) {
-	FormulaNode o;
-	o.setOp(stack.looktop());
-	queue.push(o);
-	stack.pop();
-  }
-}*/
