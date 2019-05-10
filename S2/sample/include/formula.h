@@ -4,6 +4,9 @@
 #include "stakk.h"
 
 
+enum Operators {SUM, SUB, MUL, DIV, OPEN_BRACKET, CLOSE_BRACKET};
+
+
 class FormulaNode {
 public:
   FormulaNode() {
@@ -83,17 +86,16 @@ std::ostream& operator<< (std::ostream& ost, const FormulaNode& node) {
   return ost;
 }
 
-
-bool operator> (const Operators& op1, Operators& op2) {
+// imenno >, ne >= !!!
+bool operator> (Operators op1, Operators op2) {
+  if (op2 == OPEN_BRACKET)
+    return true;
   if (op1 == OPEN_BRACKET)
+    return false; 
+  if ((op1 == DIV || op1 == MUL) && (op2 == SUM || op2 == SUB))
     return true;
-  if (op1 == DIV || op1 == MUL)
-    return true;
-  if (op1 == SUM || op1 == SUB)
-    if (op2 == DIV || op2 == MUL)
-      return false;
-    else
-      return true;
+  return false;
+
 }
 
 template<typename Q> class FormulaParser {
@@ -103,23 +105,32 @@ public:
 
   void parse(const char* formula) {
     if (m_qu == nullptr)
-      throw std::runtime_error("FormulaParser: have no outpit queue");
+      throw std::runtime_error("FormulaParser: have no output queue");
     for (int i = 0; i < strlen(formula); ++i) {
+      if (formula[i] == ' ')
+        continue;
       double ch = 0;
+
       if (formula[i] >= 48 && formula[i] <= 57) {
-        ch = ch * 10;
-        ch += formula[i] - '0';
-      }
-      int counter = 0;
-      if (formula[i] == ',') {
-        ++i;
-        while (formula[i] != '+' || formula[i] != '-' || formula[i] != '*' || formula[i] != '/') {
-          counter--;
-          ch += (formula[i] - '0') * pow(10, counter);
+        while (formula[i] != '+' && formula[i] != '-' && formula[i] != '*' && formula[i] != '/' && formula[i] != ')' && formula[i] != '(' && i != strlen(formula) && formula[i] != ' ') {
+          ch = ch * 10;
+          ch += formula[i] - '0';
+          ++i;
+
+          if (formula[i] == ',') {
+            int counter = 0;
+            ++i;
+            while (formula[i] != '+' && formula[i] != '-' && formula[i] != '*' && formula[i] != '/' && formula[i] != ')' && formula[i] != '(' && i != strlen(formula) && formula[i] != ' ') {
+              counter--;
+              ch += (formula[i] - '0') * pow(10, counter);
+              ++i;
+            }
+            break;
+          }
         }
+        i--;
       }
-      if (formula[i] == '+' || formula[i] == '-' || formula[i] == '*' || formula[i] == '/' || formula[i] == ')' || formula[i] == '(')
-      {
+      if (formula[i] == '+' || formula[i] == '-' || formula[i] == '*' || formula[i] == '/' || formula[i] == ')' || formula[i] == '(') {
         FormulaNode node(formula[i]);
         m_qu->push(node);
       }
@@ -146,45 +157,56 @@ public:
   void run() {
     while (!m_input->empty()) {
       FormulaNode node = m_input->getfirst();
-      if (node.isOperand()) {
-        m_output->push(node);
-      }
+
+      if (node.isOperand())
+        m_output->push(node); 
+
       else {
         if (m_sta.empty())
           m_sta.push(node);
+
         else {
-
           switch (node.oper()) {
-
-          case OPEN_BRACKET:
-            m_sta.push(node);
-            break;
+          case OPEN_BRACKET: m_sta.push(node); break;
           case CLOSE_BRACKET:
-            while (!m_sta.empty() && node.oper() != OPEN_BRACKET) {
+            while (!m_sta.empty() && m_sta.looktop().oper() != OPEN_BRACKET) {
               m_output->push(m_sta.looktop());
               m_sta.pop();
             }
-            m_sta.pop();
-            m_input->getfirst();
+            m_sta.pop(); // pop '('
+            //push all that was under '('
+            while (!m_sta.empty()) {
+              m_output->push(m_sta.looktop());
+              m_sta.pop();
+            }
+            break;
 
           default:
-            if (node.oper() > m_sta.looktop().oper()) {
-              m_sta.push(node);
-            }
+            if (node.oper() > m_sta.looktop().oper())
+              m_sta.push(node); 
+
             else {
-              while (!m_sta.empty() && !(node.oper() > m_sta.looktop().oper())) {
+              while (!m_sta.empty() && !(node.oper() > m_sta.looktop().oper()) && m_sta.looktop().oper() != OPEN_BRACKET ) {
                 m_output->push(m_sta.looktop());
                 m_sta.pop();
               }
+              m_sta.push(node);
             }
-
             break;
           }
-
-
         }
       }
     }
+    //push all that weren't pushed
+    while (!m_sta.empty()) {
+      m_output->push(m_sta.looktop());
+      m_sta.pop();
+    }
+    //whitout this ne rabotaet, because y Hac CloMaH arr.h (clear() do not clear actually idk why)
+    FormulaNode someTrashLol;
+    m_sta.push(someTrashLol); 
+    //print the result
+    m_output->print() ;
   }
 private:
   Q* m_input;
@@ -207,7 +229,7 @@ template<typename Q>  double evaluate(Q&q) {
       if (op1.isOperand() && op2.isOperand()) {
         double r = 0;
         switch (node.oper()) {
-        case SUM: 
+        case SUM:
           r = op1.value() + op2.value();
           break;
         case SUB:
@@ -222,13 +244,14 @@ template<typename Q>  double evaluate(Q&q) {
         }
         sta.push(FormulaNode(r));
       }
-
+      else {
+        throw std::runtime_error("It's not Polskii notation");
+        exit(-1);
+      }
     }
   }
-  if (!sta.empty())
-    return sta.looktop().value();
-  else 
-    throw std::logic_error("No evalution");
+  return sta.looktop().value();
+
 
 };
 

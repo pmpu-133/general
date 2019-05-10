@@ -5,7 +5,13 @@
 template <typename T> class qu {
 public:
  
+  qu() {}
 
+  void print() {
+    for (int i = 0; i < m_storage.Size(); ++i)
+      cout << m_storage[i] << " ";
+    cout << endl;
+  }
 
   void push(const T& data) {
       m_storage.addData(data);
@@ -28,6 +34,7 @@ public:
     else 
       throw std::logic_error("Queue is empty!");
   }
+
 private:
   list<T> m_storage;
 };
