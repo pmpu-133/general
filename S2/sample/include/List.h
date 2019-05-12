@@ -1,6 +1,8 @@
 #pragma once
 
-#include "stdafx.h"
+//#include "stdafx.h"
+#include "pch.h"
+
 #include <iostream>
 
 #include <stdexcpt.h>
@@ -14,6 +16,19 @@ public:
 
   size_t Size()const {
     return size;
+  }
+
+  Data operator[](int ind) {
+    if ((ind < size) && (ind > -1)) {
+      Pointer tmp(*this);
+      if (ind == 0)
+        return *tmp;
+      for (int i = 0; i < ind; ++i)
+        tmp++;
+      return *tmp;
+    }
+     
+    throw std::invalid_argument("Index values out of bounds");
   }
 
   Data getFirst() {
