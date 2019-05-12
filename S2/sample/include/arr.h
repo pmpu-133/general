@@ -300,11 +300,14 @@ template<typename Data> void Array<Data>::addData(const Data& data) {
   Data* tmp = new Data[size];
   for (int i = 0; i < size; ++i)
     tmp[i] = getValue(i);
+  if (arr)
+    delete[] arr;
   arr = new Data[size + 1];
   for (int i = 0; i < size; ++i)
     arr[i] = tmp[i];
   arr[size] = data;
   size++;
+  delete[] tmp;
 }
 
 
