@@ -27,8 +27,9 @@ public:
 		}
 	}
 	~Array() {
-		if (!isVoid()) {
+		if (arr) {
 			delete[] arr;
+			size = 0;
 		}
 	}
 	size_t Size() const {

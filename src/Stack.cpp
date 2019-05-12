@@ -11,7 +11,7 @@
 using namespace std;
 int main() 
 {
-	char f[] = "3+5*2-4/2";
+	/*char f[] = "3+5*2-4/2";
 	qu<FormulaNode> inputQ, outputQ;
 
 
@@ -22,7 +22,36 @@ int main()
 
 	while (!outputQ.empty()) {
 		std::cout << outputQ.getfirst();
+	}*/
+
+	char f[] = "(6+10-4)/(1+1*2)+1";
+	qu<FormulaNode> inputQ, outputQ;
+
+	FormulaParser< qu<FormulaNode> > parser;
+	parser.setResult(&outputQ);
+	parser.parse(f);
+
+
+	outputQ.print();
+
+	try {
+		DijkstraSorter< qu<FormulaNode> > result;
+		result.setInput(&outputQ);
+		result.setOutput(&inputQ);
+
+		result.run();
+
+		cout << evaluate(inputQ) << endl;
+
 	}
+	catch (logic_error r1) {
+		cout << r1.what() << endl;
+	}
+	catch (runtime_error r2) {
+		cout << r2.what() << endl;
+	}
+
+	
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu

@@ -147,6 +147,9 @@ public:
 		m_input = nullptr;
 		m_output = nullptr;
 	}
+
+	~DijkstraSorter() {}
+
 	void setInput(Q* q) { m_input = q; }
 	void setOutput(Q* q) { m_output = q; }
 	void run() {
@@ -168,12 +171,8 @@ public:
 							m_output->push(m_sta.looktop());
 							m_sta.pop();
 						}
-						m_sta.pop(); // pop '('
-						//push all that was under '('
-						while (!m_sta.empty()) {
-							m_output->push(m_sta.looktop());
-							m_sta.pop();
-						}
+						if (!m_sta.empty())
+							m_sta.pop(); // pop '('
 						break;
 
 					default:
@@ -197,9 +196,9 @@ public:
 			m_output->push(m_sta.looktop());
 			m_sta.pop();
 		}
-		////whitout this ne rabotaet, because y Hac CloMaH arr.h (clear() do not clear actually idk why)
-		//FormulaNode someTrashLol;
-		//m_sta.push(someTrashLol);
+		//whitout this ne rabotaet, because y Hac CloMaH arr.h (clear() do not clear actually idk why)
+		FormulaNode someTrashLol;
+		//m_sta.push(someTrashLol); 
 		//print the result
 		m_output->print();
 	}
@@ -218,6 +217,10 @@ template<typename Q>  double evaluate(Q& q) {
 		if (node.isOperand())
 			sta.push(node);
 		else {
+			if (node.oper() == OPEN_BRACKET || node.oper() == CLOSE_BRACKET) {
+				std::cout << "Wrong ammount of brackets" << std::endl;
+				exit(-1);
+			}
 			FormulaNode op1 = sta.looktop(); sta.pop();
 			FormulaNode op2 = sta.looktop(); sta.pop();
 
@@ -246,6 +249,4 @@ template<typename Q>  double evaluate(Q& q) {
 		}
 	}
 	return sta.looktop().value();
-
-
 };
