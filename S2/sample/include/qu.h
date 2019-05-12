@@ -7,6 +7,8 @@ public:
  
   qu() {}
 
+  ~qu() {}
+
   void print() {
     for (int i = 0; i < m_storage.Size(); ++i)
       cout << m_storage[i] << " ";

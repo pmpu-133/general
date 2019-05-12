@@ -7,6 +7,8 @@ public:
 
   stakk() {}
 
+  ~stakk() {}
+
   void print() {
     for (int i = 0; i < m_storage.Size(); ++i)
       cout << m_storage[i] << " ";
@@ -14,7 +16,7 @@ public:
   }
 
   void push(const T& data) {
-    m_storage.addData(m_storage, data);
+    m_storage.addData(data);
   }
 
   size_t size()const {

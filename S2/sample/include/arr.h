@@ -60,7 +60,7 @@ public:
   };
   
   void clear();
-  void addData(Array& a, const Data& data);
+  void addData(const Data& data);
   size_t Size()const;
   Data getValue(size_t i)const;
   Data getLast()const {
@@ -235,7 +235,11 @@ template<typename Data> Array<Data>::Array(const Array &original) {
 
 
 template<typename Data> Array<Data>::~Array() {
-  clear();
+  if (arr) {
+    delete[] arr;
+    size = 0;
+   
+  }
 }
 
 
@@ -282,19 +286,22 @@ template<typename Data> Data& Array<Data>::Pointer::operator=(const Data& data) 
 
 
 template<typename Data> void Array<Data>::clear() {
-  if (!isVoid())
+  if (arr && !isVoid()) {
     delete[] arr;
-  else
-    throw std::logic_error("No array");
+    arr = nullptr;
+    size = 0;
+  }
+  //else
+   // throw std::logic_error("No array");
 }
 
 
-template<typename Data> void Array<Data>::addData(Array& a, const Data& data) {
-  Data* tmp = new Data[a.Size()];
-  for (int i = 0; i < a.Size(); ++i)
-    tmp[i] = a.getValue(i);
+template<typename Data> void Array<Data>::addData(const Data& data) {
+  Data* tmp = new Data[size];
+  for (int i = 0; i < size; ++i)
+    tmp[i] = getValue(i);
   arr = new Data[size + 1];
-  for (int i = 0; i < a.Size(); ++i)
+  for (int i = 0; i < size; ++i)
     arr[i] = tmp[i];
   arr[size] = data;
   size++;
@@ -335,7 +342,7 @@ template<typename Data> bool Array<Data>::isVoid()const {
 
 template<typename Data> void Array<Data>::deleteElement(size_t i) {
   if (0 <= i && i < size) {
-    for (int j = i; j < size; ++j)
+    for (int j = i; j < size - 1; ++j)
       *(arr + j) = *(arr + j + 1);
     size--;
   }
