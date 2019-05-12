@@ -42,7 +42,7 @@ public:
 			return *(arr + ind);
 		throw std::invalid_argument("Index values out of bounds");
 	}
-	void AddData(Data value) {
+	void AddData(const Data& value) {
 		Data* tmp = new Data[Size()];
 		for (size_t i = 0; i < Size(); ++i) {
 			tmp[i] = GetValue(i);
@@ -74,10 +74,9 @@ public:
 	}
 	bool isVoid() const { return Size() == 0; }
 	void DeleteElement(size_t i) {
-		if (i < size) {
-			for (size_t j = i; j < size - 1; j++) {
+		if (0<=i && i < size) {
+			for (int j = i; j < size; ++j)
 				arr[j] = arr[j + 1];
-			}
 		}
 		size--;
 	}
