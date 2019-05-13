@@ -1,7 +1,5 @@
 #pragma once
 
-//#include "stdafx.h"
-#include "pch.h"
 
 #include <iostream>
 
@@ -9,9 +7,22 @@
 
 template<typename Data> class list {
 public:
-  list() : first(nullptr), last(nullptr), size(0) {}
+  list() : first(nullptr), last(nullptr), size(0) {
+    cout << "list::list()" << endl;
+  }
   list(Data d);
   list(const list &original);
+  list(list &&original) {
+    cout << "list::list(list &&original)" << endl;
+    first = original.first;
+    last = original.last;
+    size = original.size;
+
+    //!!!
+    original.first = nullptr;
+    original.last = nullptr;
+    original.size = 0;
+  }
   ~list();
 
   size_t Size()const {
@@ -45,12 +56,38 @@ public:
     size--;
   }
 
-  void operator=(const list<Data>& original);
+  const list& operator=(const list<Data>& original) {
+    cout << "list::list(const list<Data>& original)" << endl;
+    clear();
+    first = nullptr;
+    last = nullptr;
+    if (original.first != nullptr) {
+      cell * tmp = original.first;
+      while (tmp != nullptr) {
+        addData(tmp->data);
+        tmp = tmp->next;
+      }
+    }
+  }
+
+  const list& operator=(const list<Data>&& original) {
+    cout << "list::list(const list<Data>&& original)" << endl;
+    clear();
+    first = original.first;
+    last = original.last;
+    size = original.size;
+
+    original.first = nullptr;
+    original.last = nullptr;
+    original.size = 0;
+    return *this;
+  }
 
   struct cell {
     Data data;
     cell* next;
     cell* prev;
+  
   };
 
   void clear();
@@ -109,6 +146,7 @@ private:
 
 
 template<typename Data> list<Data>::list(Data d) {
+  cout << "list::list(Data d)" << endl;
   size = 0;
   first = nullptr;
   last = nullptr;
@@ -117,6 +155,7 @@ template<typename Data> list<Data>::list(Data d) {
 
 
 template<typename Data> list<Data>::list(const list &original) {
+  cout << "list::list(const list &original)" << endl;
   size = 0;
   first = nullptr;
   last = nullptr;
@@ -131,21 +170,8 @@ template<typename Data> list<Data>::list(const list &original) {
 
 
 template<typename Data> list<Data>::~list() {
+  cout << "list::~list()" << endl;
   clear();
-}
-
-
-template<typename Data> void list<Data>::operator=(const list<Data>& original) {
-  clear();
-  first = nullptr;
-  last = nullptr;
-  if (original.first != nullptr) {
-    cell * tmp = original.first;
-    while (tmp != nullptr) {
-      addData(tmp->data);
-      tmp = tmp->next;
-    }
-  }
 }
 
 

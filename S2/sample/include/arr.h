@@ -1,20 +1,43 @@
 #pragma once
 
 
-//#include "stdafx.h"
-#include "pch.h"
 #include <iostream>
 
 #include <stdexcpt.h>
 
 template<typename Data> class Array {
 public:
-  Array() : arr(nullptr), size(0) {}
-  Array(size_t n);
+  Array() : arr(nullptr), size(0) {
+    cout << "Array::Array()" << endl;
+  }
+  explicit Array(size_t n);
   Array(const Array &original);
+  Array(Array &&original) {  //конструктор перемещения позволяет экономить ресурсы
+    cout << "Array::Array(Array &&original)" << endl;
+
+    arr = original.arr;
+    size = original.size;
+
+    //!!!
+    original.arr = nullptr;
+    original.size = 0;
+
+  }
   ~Array();
   
+  const Array& operator=(Array<Data>&& original) {
+    cout << "Array::operator=(Array<Data>&& original)" << endl;
+    clear();
+    arr = original.arr;
+    size = original.size;
+
+    original.arr = nullptr;
+    original.size = 0;
+    return *this;
+  }
+
   const Array& operator=(const Array<Data>& original) {
+    cout << "Array::operator=(const Array<Data>& original)" << endl;
     clear();
     size = original.size;
     arr = new Data[size];
@@ -217,29 +240,35 @@ private:
 
 };
 
+
 template<typename Data> Array<Data>::Array(size_t n) {
+  cout << "Array::Array(size_t n)" << endl;
   size = n;
   arr = new Data[size];
   for (size_t i = 0; i < size; ++i) {
     *(arr + i) = 0;
   }
+  
 }
 
 
 template<typename Data> Array<Data>::Array(const Array &original) {
+  cout << "Array::Array(const Array &original)" << endl;
   size = original.Size();
   arr = new Data[size];
   for (size_t i = 0; i < size; ++i)
     *(arr + i) = original.getValue(i);
+  
 }
 
 
 template<typename Data> Array<Data>::~Array() {
+  cout << "Array::~Array()" << endl;
   if (arr) {
     delete[] arr;
     size = 0;
-   
   }
+
 }
 
 
@@ -308,6 +337,13 @@ template<typename Data> void Array<Data>::addData(const Data& data) {
   arr[size] = data;
   size++;
   delete[] tmp;
+  /*Data* tmp = new Data[++size];
+  for (int i = 0; i < size; ++i)
+  tmp[i] = getValue(i);
+  tmp[size - 1] = data;
+  if (arr)
+  delete[] arr;
+  arr = tmp;*/
 }
 
 
