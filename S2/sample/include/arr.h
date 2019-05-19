@@ -5,6 +5,8 @@
 
 #include <stdexcpt.h>
 
+using namespace std;
+
 template<typename Data> class Array {
 public:
   Array() : arr(nullptr), size(0) {

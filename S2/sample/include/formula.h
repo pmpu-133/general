@@ -3,6 +3,8 @@
 #include "qu.h"
 #include "stakk.h"
 
+#include <stack> 
+#include <queue>
 
 enum Operators {SUM, SUB, MUL, DIV, OPEN_BRACKET, CLOSE_BRACKET};
 
@@ -159,8 +161,8 @@ public:
   void setOutput(Q*q) { m_output = q;}
   void run() {
     while (!m_input->empty()) {
-      FormulaNode node = m_input->getfirst();
-
+      FormulaNode node = m_input->front();
+      m_input->pop();
       if (node.isOperand())
         m_output->push(node); 
 
@@ -172,8 +174,8 @@ public:
           switch (node.oper()) {
           case OPEN_BRACKET: m_sta.push(node); break;
           case CLOSE_BRACKET:
-            while (!m_sta.empty() && m_sta.looktop().oper() != OPEN_BRACKET) {
-              m_output->push(m_sta.looktop());
+            while (!m_sta.empty() && m_sta.top().oper() != OPEN_BRACKET) {
+              m_output->push(m_sta.top());
               m_sta.pop();
             }
             if (!m_sta.empty())
@@ -181,12 +183,12 @@ public:
             break;
 
           default:
-            if (node.oper() > m_sta.looktop().oper())
+            if (node.oper() > m_sta.top().oper())
               m_sta.push(node); 
 
             else {
-              while (!m_sta.empty() && !(node.oper() > m_sta.looktop().oper()) && m_sta.looktop().oper() != OPEN_BRACKET ) {
-                m_output->push(m_sta.looktop());
+              while (!m_sta.empty() && !(node.oper() > m_sta.top().oper()) && m_sta.top().oper() != OPEN_BRACKET ) {
+                m_output->push(m_sta.top());
                 m_sta.pop();
               }
               m_sta.push(node);
@@ -198,27 +200,22 @@ public:
     }
     //push all that weren't pushed
     while (!m_sta.empty()) {
-      m_output->push(m_sta.looktop());
+      m_output->push(m_sta.top());
       m_sta.pop();
     }
-    //whitout this ne rabotaet, because y Hac CloMaH arr.h (clear() do not clear actually idk why)
-    FormulaNode someTrashLol;
-    //m_sta.push(someTrashLol); 
-    //print the result
-    m_output->print() ;
   }
 private:
   Q* m_input;
   Q* m_output;
-  stakk<FormulaNode> m_sta;
+  stack<FormulaNode> m_sta;
 };
 
 
 template<typename Q>  double evaluate(Q&q) {
-  stakk<FormulaNode> sta;
-
+  stack<FormulaNode> sta;
   while (!q.empty()) {
-    FormulaNode node = q.getfirst();
+    FormulaNode node = q.front();
+    q.pop();
     if (node.isOperand())
       sta.push(node);
     else {
@@ -226,8 +223,8 @@ template<typename Q>  double evaluate(Q&q) {
         std::cout << "Wrong ammount of brackets" << std::endl;
         exit(-1);
       }
-      FormulaNode op1 = sta.looktop(); sta.pop();
-      FormulaNode op2 = sta.looktop(); sta.pop();
+      FormulaNode op1 = sta.top(); sta.pop();
+      FormulaNode op2 = sta.top(); sta.pop();
 
       if (op1.isOperand() && op2.isOperand()) {
         double r = 0;
@@ -253,5 +250,5 @@ template<typename Q>  double evaluate(Q&q) {
       }
     }
   }
-  return sta.looktop().value();
+  return sta.top().value();
 };

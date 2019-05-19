@@ -6,6 +6,13 @@ template <typename Key, typename Data> class AVLtree {
 public:
   AVLtree() : root(nullptr) {}
   AVLtree(Key& k, Data& value);
+  AVLtree(AVLtree & original) {
+    root = original.root;
+  }
+  AVLtree(AVLtree && original) {
+    root = original.root;
+    original.root = nullptr;
+  }
   ~AVLtree();
 
   void push(const Key& k, const Data& value);

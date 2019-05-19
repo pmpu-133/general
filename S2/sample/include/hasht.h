@@ -26,10 +26,10 @@ public:/*
 template<typename K, typename V, typename hasher = simple_hasher<K> > class hasht {
 public:
   hasht();
-  ~hasht();
+  ~hasht(); 
   void AddData(const K& k, const V&value); 
   bool hasK(const K& k)const;
-  V operator[](const K&k)const;
+  V* operator[](const K&k)const;
   void validate() {
     size_t notNullCount = 0;
     for (size_t k = 0; k < m_Storage.Size(); ++k) {
@@ -68,7 +68,7 @@ template<typename K, typename V, typename hasher> hasht<K, V, hasher>::~hasht() 
 
 
 template<typename K, typename V, typename hasher> void hasht<K, V, hasher>::AddData(const K& k, const V&value) {
-  //std::cout << "--------------------" << std::endl;
+  std::cout << "--------------------" << std::endl;
   simple_hasher<K> t;
   size_t cellind = t(k);
   cellind %= 256;
@@ -77,7 +77,7 @@ template<typename K, typename V, typename hasher> void hasht<K, V, hasher>::AddD
     while (probe != cellind && m_Storage[probe] != nullptr) {
       ++probe %= 256;
 
-      //std::cout << "Probe " << probe << '\t' << (m_Storage[probe] != nullptr)  << std::endl;
+      std::cout << "Probe " << probe << '\t' << (m_Storage[probe] != nullptr)  << std::endl;
 
     }
     if (m_Storage[probe] != nullptr)
@@ -101,9 +101,9 @@ template<typename K, typename V, typename hasher> bool hasht<K, V, hasher>::hasK
 }
 
 
-template<typename K, typename V, typename hasher> V hasht<K, V, hasher>::operator[](const K&k)const {
+template<typename K, typename V, typename hasher> V* hasht<K, V, hasher>::operator[](const K&k)const {
   simple_hasher<K> t;
   size_t cellind = t(k);
   cellind %= 256;
-  return *m_Storage[cellind];
+  return m_Storage.getValue(cellind);
 }
